@@ -1,13 +1,17 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 
-int convert(const char* f_in_name, const char* f_out_name) {
-	FILE* f_in = fopen(f_in_name, "r");
+#include "convert.h"
+
+int convert(const str_t f_in_name, const str_t f_out_name) {
+
+
+	FILE* f_in = FOPEN(f_in_name, L"r");
 	if(!f_in)
 		return 1;
 
-	FILE* f_out = fopen(f_out_name, "w");
+	FILE* f_out = FOPEN(f_out_name, L"w");
 	if(!f_out)
 		return 1;
 

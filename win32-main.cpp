@@ -1,9 +1,11 @@
-#ifdef WIN32
+#ifdef _WIN32
 
-#include <windows.h>
+#include <Windows.h>
 #include <shobjidl.h>
 
-int convert(const char* f_in_name, const char* f_out_name);
+#include <string>
+
+#include "convert.h"
 
 // Part of this code comes from Microsoft documentation available at:
 // https://learn.microsoft.com/en-us/windows/win32/learnwin32/example--the-open-dialog-box
@@ -18,6 +20,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
         IFileSaveDialog *pFileSave;
 
         PWSTR f_in_name, f_out_name;
+        BOOL f_in_name_allocd = false;
+        BOOL f_out_name_allocd = false;
 
         // Create the FileOpenDialog object.
         hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
@@ -35,14 +39,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
                 hr = pFileOpen->GetResult(&pItem);
                 if (SUCCEEDED(hr))
                 {
-                    PWSTR pszFilePath;
-                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &f_in_name);
 
                     // Display the file name to the user.
                     if (SUCCEEDED(hr))
                     {
-                    	f_in_name = pszFilePath;
-                        CoTaskMemFree(pszFilePath);
+                        f_in_name_allocd = true;
                     }
                     pItem->Release();
                 }
@@ -52,7 +54,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 
         // Create the FileSaveDialog object.
         hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
-                IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileSave));
+                IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
 
         if (SUCCEEDED(hr))
         {
@@ -66,14 +68,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
                 hr = pFileSave->GetResult(&pItem);
                 if (SUCCEEDED(hr))
                 {
-                    PWSTR pszFilePath;
-                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &f_out_name);
 
                     // Display the file name to the user.
                     if (SUCCEEDED(hr))
                     {
-                        f_out_name = pszFilePath;
-                        CoTaskMemFree(pszFilePath);
+                        f_out_name_allocd = true;
                     }
                     pItem->Release();
                 }
@@ -81,9 +81,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
             pFileSave->Release();
         }
 
-        convert(f_in_name.c_str(), f_out_name.c_str());
+        if (convert(f_in_name, f_out_name) == 0)
+            MessageBoxW(NULL, L"Conversion Is Done.", L"Info", MB_OK);
+        else
+            MessageBoxW(NULL, L"Conversion Failed.", L"Error", MB_OK);
 
-        MessageBoxW(NULL, "Conversion Is Done.", L"", MB_OK);
+        if(f_in_name_allocd)
+            CoTaskMemFree(f_in_name);
+
+        if(f_out_name_allocd)
+            CoTaskMemFree(f_out_name);
 
         CoUninitialize();
     }

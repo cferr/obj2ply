@@ -1,10 +1,11 @@
 #ifndef _BSDUTILS_H
+#define _BSDUTILS_H
 
 #include <sys/types.h>
 #include <stdio.h>
 
 #ifdef _WIN32
-typedef ssize_t long long int;
+typedef long long int ssize_t;
 #endif
 
 ssize_t

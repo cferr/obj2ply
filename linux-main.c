@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-int convert(const char* f_in_name, const char* f_out_name);
+#include "convert.h"
 
 int main(int argc, char* argv[]) {
 	if(argc < 3) {
