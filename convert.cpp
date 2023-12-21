@@ -5,13 +5,11 @@
 #include "convert.h"
 
 int convert(const str_t f_in_name, const str_t f_out_name) {
-
-
-	FILE* f_in = FOPEN(f_in_name, L"r");
+	FILE* f_in = FOPEN(f_in_name, TEXT("r"));
 	if(!f_in)
 		return 1;
 
-	FILE* f_out = FOPEN(f_out_name, L"w");
+	FILE* f_out = FOPEN(f_out_name, TEXT("w"));
 	if(!f_out)
 		return 1;
 
