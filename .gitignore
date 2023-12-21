@@ -1,0 +1,11 @@
+/Debug/
+/.vs
+/.settings
+/samples
+/x64
+/.cproject
+/.project
+/*.json
+/*.sln
+/*.i
+/*.vcxproj*
